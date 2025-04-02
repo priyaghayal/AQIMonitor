@@ -1,0 +1,44 @@
+CREATE DATABASE sensordata;
+USE SensorData;
+
+CREATE TABLE Observations (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    date DATE,
+    time TIME,
+    AQI FLOAT
+);
+
+CREATE TABLE AESData (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    date_enc TEXT NOT NULL,
+    time_enc TEXT NOT NULL,
+    AQI_enc TEXT NOT NULL,
+    encryption_time FLOAT NOT NULL,
+    decryption_time FLOAT NOT NULL,
+    data_size INT NOT NULL,
+    key_size INT NOT NULL
+);
+
+
+CREATE TABLE LibsodiumData (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    date_enc TEXT NOT NULL,
+    time_enc TEXT NOT NULL,
+    AQI_enc TEXT NOT NULL,
+    encryption_time FLOAT NOT NULL,
+    decryption_time FLOAT NOT NULL,
+    data_size INT NOT NULL,
+    key_size INT NOT NULL
+);
+
+
+CREATE TABLE PQCData (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    date_enc TEXT NOT NULL,
+    time_enc TEXT NOT NULL,
+    AQI_enc TEXT NOT NULL,
+    encryption_time FLOAT NOT NULL,
+    decryption_time FLOAT NOT NULL,
+    data_size INT NOT NULL,
+    key_size INT NOT NULL
+);
