@@ -1,48 +1,61 @@
-import os
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
-def process_csv_files(folder_path):
-    # Define the file names and corresponding algorithm names
-    files = {
-        "aes_results.csv": "AES",
-        "libsodium_results.csv": "Libsodium",
-        "pqc_results.csv": "PQC"
-    }
-    
-    # Lists to store data for tables
-    table1 = []  # Columns: algo, keysize, enc time, dec time
-    table2 = []  # Columns: algo, data size, enc time, dec time
-    
-    for file_name, algo_name in files.items():
-        file_path = os.path.join(folder_path, file_name)
-        
-        if os.path.exists(file_path):
-            df = pd.read_csv(file_path)
-            
-            # Group by keySize and calculate average encryption and decryption time
-            keysize_group = df.groupby("keySize")[["encryptionTime", "decryptionTime"]].mean().reset_index()
-            for _, row in keysize_group.iterrows():
-                table1.append([algo_name, row["keySize"], row["encryptionTime"], row["decryptionTime"]])
-            
-            # Group by dataSize and calculate average encryption and decryption time
-            datasize_group = df.groupby("dataSize")[["encryptionTime", "decryptionTime"]].mean().reset_index()
-            for _, row in datasize_group.iterrows():
-                table2.append([algo_name, row["dataSize"], row["encryptionTime"], row["decryptionTime"]])
-    
-    # Convert lists to DataFrames
-    table1_df = pd.DataFrame(table1, columns=["Algorithm", "Key Size", "Avg Encryption Time", "Avg Decryption Time"])
-    table2_df = pd.DataFrame(table2, columns=["Algorithm", "Data Size", "Avg Encryption Time", "Avg Decryption Time"])
-    
-    return table1_df, table2_df
+# Load your CSV files
+aes_df = pd.read_csv("csv/aes_results.csv")
+libsodium_df = pd.read_csv("csv/libsodium_results.csv")
+aes_gcm_df = pd.read_csv("csv/aes_gcm_results.csv")  
 
-# Folder path where CSV files are stored
-csv_folder = "csv"
+# Target aligned data sizes
+target_sizes = [100, 150, 200, 250]
 
-# Process the CSV files and generate tables
-table1, table2 = process_csv_files(csv_folder)
+# Function to interpolate to the target sizes
+def interpolate_to_targets(df, method_name):
+    df_sorted = df.sort_values('dataSize')
+    interp_df = pd.DataFrame({
+        'dataSize': target_sizes,
+        'encryptionTime': np.interp(target_sizes, df_sorted['dataSize'], df_sorted['encryptionTime']),
+        'decryptionTime': np.interp(target_sizes, df_sorted['dataSize'], df_sorted['decryptionTime']),
+        'Method': method_name
+    })
+    return interp_df
 
-# Display the tables
-print("Table 1: Algorithm vs Key Size")
-print(table1.to_string(index=False))
-print("\nTable 2: Algorithm vs Data Size")
-print(table2.to_string(index=False))
+# Interpolate each method
+aes_interp = interpolate_to_targets(aes_df, 'aes-cbc')
+libsodium_interp = interpolate_to_targets(libsodium_df, 'libsodium')
+aes_gcm_interp = interpolate_to_targets(aes_gcm_df, 'aes-gcm')
+
+# Combine interpolated data
+aligned_df = pd.concat([aes_interp, libsodium_interp, aes_gcm_interp])
+
+# Pivot tables for plotting
+grouped_df = aligned_df.groupby(['dataSize', 'Method'])[['encryptionTime', 'decryptionTime']].mean().reset_index()
+enc_pivot = grouped_df.pivot(index='dataSize', columns='Method', values='encryptionTime')
+dec_pivot = grouped_df.pivot(index='dataSize', columns='Method', values='decryptionTime')
+
+# Define custom colors
+colors = {
+    'aes-cbc': '#1f77b4',
+    'libsodium': '#2ca02c',
+    'aes-gcm': '#d62728'
+}
+
+# Plot
+fig, axs = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+
+# Encryption
+enc_pivot.plot(kind='bar', ax=axs[0], color=[colors[col] for col in enc_pivot.columns])
+axs[0].set_title('Interpolated Encryption Time (Aligned Data Sizes)')
+axs[0].set_ylabel('Time (ms)')
+axs[0].legend(title='Method')
+
+# Decryption
+dec_pivot.plot(kind='bar', ax=axs[1], color=[colors[col] for col in dec_pivot.columns])
+axs[1].set_title('Interpolated Decryption Time (Aligned Data Sizes)')
+axs[1].set_xlabel('Data Size (bytes)')
+axs[1].set_ylabel('Time (ms)')
+axs[1].legend(title='Method')
+
+plt.tight_layout()
+plt.show()

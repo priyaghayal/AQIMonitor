@@ -39,18 +39,19 @@ def plot_std(results):
     plt.show()
 
 # File paths (update with actual file locations)
-aes_file = 'aes_results.csv'
-libsodium_file = 'libsodium_results.csv'
-pqc_file = 'pqc_results.csv'
+aes_file = 'csv/aes_results.csv'
+libsodium_file = 'csv/libsodium_results.csv'
+aes_gcm_file = 'csv/aes_gcm_results.csv'
 
 aes_data = load_data(aes_file)
 libsodium_data = load_data(libsodium_file)
-kyber_data = load_data(pqc_file)
+aes_gcm_data = load_data(aes_gcm_file)
 
 results = [
-    compute_std(aes_data, 'AES'),
+    compute_std(aes_data, 'AES-256-CBC'),
     compute_std(libsodium_data, 'Libsodium'),
-    compute_std(kyber_data, "Kyber")
+    compute_std(aes_gcm_data, "AES-256-GCM")
+
 ]
 
 plot_std(results)

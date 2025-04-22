@@ -81,12 +81,12 @@ try:
     
     # Insert into database
     insert_query = """
-    INSERT INTO PQCData (date_enc, time_enc, AQI_enc, encryption_time, decryption_time, data_size, key_size) 
+    INSERT INTO AesGcmData (date_enc, time_enc, AQI_enc, encryption_time, decryption_time, data_size, key_size) 
     VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
     cursor.executemany(insert_query, encrypted_data)
     connection.commit()
-    print("Encrypted data inserted into MySQL table PQCData.")
+    print("Encrypted data inserted into MySQL table AesGcmData.")
 
     # Ensure 'csv' directory exists
     csv_dir = 'csv'
@@ -94,7 +94,7 @@ try:
         os.makedirs(csv_dir)
 
     # Save results to CSV
-    csv_file_path = os.path.join(csv_dir, 'pqc_results.csv')
+    csv_file_path = os.path.join(csv_dir, 'aes_gcm_results.csv')
     with open(csv_file_path, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['id', 'encryptionTime', 'decryptionTime', 'dataSize', 'keySize'])
