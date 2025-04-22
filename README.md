@@ -10,8 +10,6 @@ The data is sourced from:
 This work is an outcome of the project "Datasecurity4ICity", a subproject of [ICity: Intelligent City](https://www.hft-stuttgart.com/research/projects/i-city ). We extend our gratitude for the funding received through the FHImpuls program under the number 13FH9E04IA by the German
 Federal Ministry of Education and Research BMBF (Bundesministerium für Bildung und Forschung (Federal Ministry of Education and Research, Germany).
 
-The approach is informed by methodologies described in references [3], [8], [9], and [14].
-
 ---
 
 ## ⚙️ Prerequisites
