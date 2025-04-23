@@ -7,7 +7,7 @@ import sodium from 'libsodium-wrappers';
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: 'Priya@1234',
+    password: '*********",  //Replace with your own Mysql root password
     database: 'SensorData'
 };
 
