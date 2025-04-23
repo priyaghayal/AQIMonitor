@@ -7,7 +7,7 @@ const path = require('path');
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: 'Priya@1234', // Replace with your actual MySQL root password
+    password: '*********', // Replace with your actual MySQL root password
     database: 'sensordata'
 };
 
