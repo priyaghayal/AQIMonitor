@@ -11,7 +11,7 @@ from Crypto.Random import get_random_bytes
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'Priya@1234',
+    'password': '*******', #Replace with your own Mysql root password
     'database': 'SensorData'
 }
 
